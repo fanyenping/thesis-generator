@@ -4,7 +4,9 @@
   "description": "台灣大學碩博士論文框架系統",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "sync": "git add . && git commit -m \"update $(date '+%Y-%m-%d %H:%M')\" && git push origin master",
+    "dev": "node server.js"
   },
   "keywords": [],
   "author": "",
