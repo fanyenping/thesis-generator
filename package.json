@@ -12,9 +12,12 @@
   "author": "",
   "license": "ISC",
   "type": "commonjs",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "dependencies": {
     "docx": "^9.6.1",
-    "express": "^5.2.1",
+    "express": "^4.21.2",
     "js-yaml": "^4.1.1"
   }
 }

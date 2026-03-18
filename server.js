@@ -5,19 +5,24 @@ const yaml = require('js-yaml');
 
 const app = express();
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+
+// 靜態檔案
+const publicDir = path.join(__dirname, 'public');
+app.use(express.static(publicDir));
 
 // 讀取目前設定
 app.get('/api/config', (req, res) => {
   try {
-    const cfg = yaml.load(fs.readFileSync(path.join(__dirname, 'thesis_config.yaml'), 'utf8'));
+    const cfgPath = path.join(__dirname, 'thesis_config.yaml');
+    if (!fs.existsSync(cfgPath)) return res.json({ ok: true, config: {} });
+    const cfg = yaml.load(fs.readFileSync(cfgPath, 'utf8'));
     res.json({ ok: true, config: cfg });
   } catch (e) {
     res.json({ ok: false, error: e.message });
   }
 });
 
-// 翻譯 API（使用 Google Translate 公開端點，無需套件）
+// 翻譯 API（Google Translate 公開端點）
 app.post('/api/translate', async (req, res) => {
   try {
     const { text } = req.body;
@@ -26,8 +31,6 @@ app.post('/api/translate', async (req, res) => {
     const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=zh-TW&tl=en&dt=t&q=${encodeURIComponent(text)}`;
     const response = await fetch(url);
     const data = await response.json();
-
-    // Google 回傳格式：[[["translated","original",...],...],...]
     const result = data[0].map(seg => seg[0]).join('');
     res.json({ ok: true, result });
   } catch (e) {
@@ -36,7 +39,7 @@ app.post('/api/translate', async (req, res) => {
   }
 });
 
-// 儲存設定並產生論文
+// 產生論文
 app.post('/api/generate', async (req, res) => {
   try {
     const cfg = req.body;
@@ -55,8 +58,12 @@ app.post('/api/generate', async (req, res) => {
   }
 });
 
+// 所有其他路由回傳 index.html
+app.get('*', (req, res) => {
+  res.sendFile(path.join(publicDir, 'index.html'));
+});
+
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`\n✅ 台灣論文框架系統已啟動`);
-  console.log(`   http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`✅ 台灣論文框架系統已啟動：http://0.0.0.0:${PORT}`);
 });
