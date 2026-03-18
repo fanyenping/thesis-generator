@@ -1,0 +1,101 @@
+university: 國立臺灣大學
+college: 管理學院
+program: 創業創新管理碩士在職專班
+university_en: National Taiwan University
+college_en: College of Management
+program_en: Entrepreneurship and Innovation MBA Program
+title_zh: 從場域建構到平台生態系- 以「呼叫家護師」為例， 探討AI賦能在地醫療創生模式
+title_en: Please Enter Your Thesis Title Here
+thesis_type: 碩士論文
+thesis_type_en: Master Thesis
+year_zh: 114
+month_zh: 5
+year_en: 2025
+month_en: May
+output_filename: 碩士論文.docx
+author_zh: 范硯平
+author_en: Your Name
+student_id: P12751026
+advisors:
+  - name_zh: 郭瑞祥
+    name_en: Professor Name
+    title_en: Ph.D.
+  - name_zh: 陸洛
+    name_en: ''
+    title_en: Ph.D.
+acknowledgements: 感謝AI
+abstract_zh: |
+  請在此填寫中文摘要內容。本研究探討...
+abstract_en: |
+  Please enter the English abstract here. This study investigates...
+keywords_zh:
+  - 關鍵詞一
+  - 關鍵詞二
+  - 關鍵詞三
+keywords_en:
+  - Keyword One
+  - Keyword Two
+  - Keyword Three
+chapters:
+  - number: 1
+    title_zh: 研究緒論
+    sections:
+      - number: '1.1'
+        title: 研究背景與動機
+        content: |
+          請填寫研究背景與動機內容。
+      - number: '1.2'
+        title: 研究目的與問題
+        content: |
+          請填寫研究目的與問題內容。
+      - number: '1.3'
+        title: 研究方法與架構
+        content: |
+          請填寫研究方法與架構內容。
+  - number: 2
+    title_zh: 文獻探討
+    sections:
+      - number: '2.1'
+        title: 文獻一
+        content: |
+          請填寫文獻探討內容。
+      - number: '2.2'
+        title: 文獻二
+        content: |
+          請填寫文獻探討內容。
+  - number: 3
+    title_zh: 研究方法
+    sections:
+      - number: '3.1'
+        title: 研究設計
+        content: |
+          請填寫研究設計內容。
+      - number: '3.2'
+        title: 資料蒐集
+        content: |
+          請填寫資料蒐集內容。
+  - number: 4
+    title_zh: 研究結果與討論
+    sections:
+      - number: '4.1'
+        title: 研究結果
+        content: |
+          請填寫研究結果內容。
+      - number: '4.2'
+        title: 討論
+        content: |
+          請填寫討論內容。
+  - number: 5
+    title_zh: 結論與建議
+    sections:
+      - number: '5.1'
+        title: 研究結論
+        content: |
+          請填寫研究結論內容。
+      - number: '5.2'
+        title: 研究建議
+        content: |
+          請填寫研究建議內容。
+references:
+  - 作者（年份）。論文題目。期刊名稱，卷(期)，頁碼。
+  - Author, A. B. (Year). Title of article. Journal Name, Volume(Issue), pages. https://doi.org/xxxxx

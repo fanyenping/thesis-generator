@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>台灣大學碩博士論文框架系統</title>
+<style>
+/* ── Morandi 色調變數 ── */
+:root {
+  --bg:       #ede8e1;       /* 溫暖米色底 */
+  --surface:  #f5f1ec;       /* 卡片底 */
+  --surface2: #ede9e3;       /* 次要面板 */
+  --border:   #d4cec5;       /* 邊框 */
+  --sage:     #8a9e8c;       /* 鼠尾草綠（主色） */
+  --sage-dk:  #6b7d6d;       /* 深鼠尾草 */
+  --sage-lt:  #c4d0c5;       /* 淺鼠尾草 */
+  --dusty:    #b09a8c;       /* 煙塵玫瑰（強調） */
+  --dusty-lt: #e0d4cc;       /* 淺玫瑰 */
+  --slate:    #8c8d96;       /* 藍灰 */
+  --text:     #3d3a36;       /* 深灰文字 */
+  --text-md:  #6b665f;       /* 中灰 */
+  --text-lt:  #9c9690;       /* 淺灰 */
+  --green-soft:#4a7c59;      /* 成功綠 */
+  --red-soft: #a0534a;       /* 錯誤紅 */
+  --radius:   12px;
+  --radius-sm: 8px;
+  --shadow:   0 2px 12px rgba(80,70,60,0.10);
+  --shadow-lg: 0 8px 32px rgba(80,70,60,0.14);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang TC', 'Heiti TC',
+               'Apple LiGothic Medium', 'Microsoft JhengHei', sans-serif;
+  background: var(--bg); color: var(--text);
+  min-height: 100vh; font-size: 14px;
+}
+/* SVG 圖示統一樣式 */
+.ico { display: inline-block; vertical-align: middle; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+.ico-fill { fill: currentColor; stroke: none; pointer-events: none; }
+
+/* ── 頂部標題欄 ── */
+header {
+  background: var(--sage-dk);
+  color: #f0ede8;
+  padding: 0 32px;
+  height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.08), var(--shadow);
+}
+.header-left { display: flex; align-items: center; gap: 14px; }
+.header-logo {
+  width: 34px; height: 34px; background: rgba(255,255,255,0.15);
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+header h1 { font-size: 17px; letter-spacing: 2px; font-weight: 600; }
+header .sub { font-size: 11px; color: rgba(240,237,232,0.6); margin-top: 1px; }
+.header-badge {
+  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 20px; padding: 4px 14px; font-size: 11px; color: rgba(240,237,232,0.8);
+  letter-spacing: 1px;
+}
+
+/* ── 整體版面 ── */
+.layout { display: flex; height: calc(100vh - 60px); }
+
+/* ── 側欄 ── */
+.sidebar {
+  width: 210px; background: var(--surface2);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow-y: auto; flex-shrink: 0;
+  padding: 20px 0 80px;
+}
+.sidebar-group { padding: 0 12px 8px; }
+.sidebar-group-label {
+  font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--text-lt); padding: 12px 8px 6px; font-weight: 600;
+}
+.nav-btn {
+  width: 100%; display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border: none; background: none;
+  color: var(--text-md); cursor: pointer; border-radius: var(--radius-sm);
+  font-size: 13px; font-family: inherit; transition: all 0.18s;
+  text-align: left;
+}
+.nav-btn:hover { background: rgba(138,158,140,0.12); color: var(--text); }
+.nav-btn.active {
+  background: var(--sage); color: white;
+  box-shadow: 0 2px 8px rgba(107,125,109,0.3);
+}
+.nav-btn .icon {
+  width: 28px; height: 28px; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+  background: rgba(255,255,255,0.15);
+}
+.nav-btn:not(.active) .icon { background: rgba(138,158,140,0.12); }
+
+/* ── 主內容 ── */
+.main { flex: 1; overflow-y: auto; padding: 28px 32px 100px; }
+
+/* ── 卡片 ── */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 28px;
+  box-shadow: var(--shadow); display: none;
+}
+.card.active { display: block; }
+.card-header {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 24px; padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.card-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--sage-lt); display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.card-header h2 { font-size: 17px; color: var(--sage-dk); letter-spacing: 1px; }
+.card-header p { font-size: 12px; color: var(--text-lt); margin-top: 2px; }
+
+/* ── 表單 ── */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-grid .full { grid-column: 1 / -1; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label, .field-label {
+  font-size: 12px; font-weight: 600; color: var(--text-md);
+  letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;
+}
+.field input, .field textarea, .field select {
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 9px 13px; font-size: 13px; font-family: inherit;
+  background: white; color: var(--text);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  line-height: 1.5;
+}
+.field input:focus, .field textarea:focus, .field select:focus {
+  outline: none; border-color: var(--sage);
+  box-shadow: 0 0 0 3px rgba(138,158,140,0.18);
+}
+.field textarea { resize: vertical; min-height: 90px; }
+.field select { cursor: pointer; }
+
+/* ── 分隔線 ── */
+.divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+/* ── 翻譯按鈕 ── */
+.btn-translate {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: white; color: var(--green-soft);
+  border: 1px solid var(--sage-lt); border-radius: 20px;
+  padding: 4px 12px; font-size: 11px; cursor: pointer;
+  font-family: inherit; transition: all 0.18s; white-space: nowrap;
+  font-weight: 600; letter-spacing: 0.3px;
+}
+.btn-translate:hover { background: #f0f7f0; border-color: var(--sage); }
+.btn-translate:disabled { opacity: 0.45; cursor: not-allowed; }
+.spin { display: inline-block; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── 並排翻譯佈局 ── */
+.translate-pair { display: flex; gap: 16px; align-items: flex-start; }
+.translate-pair .pane { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.translate-arrow { padding-top: 26px; color: var(--text-lt); font-size: 18px; flex-shrink: 0; }
+.pane-label {
+  font-size: 11px; font-weight: 600; letter-spacing: 1px;
+  text-transform: uppercase; display: flex; align-items: center; justify-content: space-between;
+}
+.pane-label.zh { color: var(--dusty); }
+.pane-label.en { color: var(--green-soft); }
+
+/* ── 關鍵詞 tags ── */
+.tags-wrap {
+  min-height: 42px; background: white; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 6px 8px;
+  display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+  transition: border-color 0.2s;
+}
+.tags-wrap:focus-within { border-color: var(--sage); box-shadow: 0 0 0 3px rgba(138,158,140,0.18); }
+.tag {
+  background: var(--sage-lt); color: var(--sage-dk);
+  border-radius: 20px; padding: 3px 10px 3px 12px;
+  font-size: 12px; display: flex; align-items: center; gap: 5px;
+  border: 1px solid rgba(138,158,140,0.3);
+}
+.tag button {
+  background: none; border: none; color: var(--sage-dk);
+  cursor: pointer; font-size: 14px; padding: 0; line-height: 1;
+  opacity: 0.6; transition: opacity 0.15s;
+}
+.tag button:hover { opacity: 1; }
+.tag-input {
+  border: none; outline: none; font-size: 12px; font-family: inherit;
+  background: transparent; color: var(--text); min-width: 80px;
+  padding: 2px 4px;
+}
+
+/* ── 動態清單項目 ── */
+.dynamic-item {
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 16px; background: white; position: relative;
+  transition: box-shadow 0.2s;
+}
+.dynamic-item:hover { box-shadow: var(--shadow); }
+.item-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.item-title { font-size: 13px; font-weight: 600; color: var(--sage-dk); }
+
+/* ── 章節 ── */
+.chapter-block {
+  border: 1px solid var(--border); border-radius: var(--radius);
+  overflow: hidden; margin-bottom: 14px; background: white;
+  box-shadow: var(--shadow);
+}
+.chapter-header {
+  background: linear-gradient(to right, var(--sage-lt), var(--surface2));
+  padding: 12px 18px; display: flex; align-items: center;
+  justify-content: space-between; cursor: pointer;
+}
+.chapter-header h3 { font-size: 14px; color: var(--sage-dk); font-weight: 600; }
+.chapter-body { padding: 18px; }
+.section-block {
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 14px; margin-bottom: 10px; background: var(--surface);
+}
+.section-en-area {
+  background: #f5faf6; border: 1px solid #c8ddc9; border-radius: var(--radius-sm);
+  padding: 10px 12px; margin-top: 8px;
+}
+.section-en-area label { font-size: 11px; color: var(--green-soft); font-weight: 600; letter-spacing: 0.5px; }
+
+/* ── 按鈕 ── */
+.btn-remove {
+  background: #fdf0ee; color: var(--red-soft);
+  border: 1px solid #e8c5c0; border-radius: 6px;
+  padding: 4px 10px; font-size: 11px; cursor: pointer; font-family: inherit;
+  transition: all 0.15s; white-space: nowrap;
+}
+.btn-remove:hover { background: #fbe4e0; }
+.btn-add {
+  width: 100%; background: transparent; color: var(--sage);
+  border: 1.5px dashed var(--sage-lt); border-radius: var(--radius-sm);
+  padding: 10px; cursor: pointer; font-size: 13px;
+  font-family: inherit; margin-top: 8px; transition: all 0.18s;
+  letter-spacing: 0.5px;
+}
+.btn-add:hover { background: rgba(138,158,140,0.08); border-color: var(--sage); }
+
+/* ── 參考文獻 ── */
+.ref-item { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+.ref-item input { flex: 1; }
+
+/* ── 底部列 ── */
+.bottombar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: rgba(245,241,236,0.95); backdrop-filter: blur(8px);
+  border-top: 1px solid var(--border);
+  padding: 12px 32px; display: flex; align-items: center; justify-content: space-between;
+  box-shadow: 0 -4px 20px rgba(80,70,60,0.08); z-index: 100;
+}
+.status-dot {
+  display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-md);
+}
+.status-dot::before {
+  content: ''; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--border); flex-shrink: 0;
+}
+.status-dot.ok::before { background: var(--green-soft); }
+.status-dot.err::before { background: var(--red-soft); }
+.status-dot.ok { color: var(--green-soft); }
+.status-dot.err { color: var(--red-soft); }
+.btn-generate {
+  background: var(--sage-dk); color: white; border: none;
+  border-radius: var(--radius-sm); padding: 11px 30px;
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  font-family: inherit; letter-spacing: 1px;
+  transition: all 0.2s; box-shadow: 0 3px 10px rgba(107,125,109,0.3);
+  display: flex; align-items: center; gap: 8px;
+}
+.btn-generate:hover { background: var(--sage); box-shadow: 0 5px 16px rgba(107,125,109,0.4); transform: translateY(-1px); }
+.btn-generate:active { transform: none; }
+.btn-generate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* ── Loading ── */
+.overlay {
+  position: fixed; inset: 0; background: rgba(61,58,54,0.45);
+  display: none; align-items: center; justify-content: center; z-index: 999;
+  backdrop-filter: blur(3px);
+}
+.overlay.show { display: flex; }
+.spinner-box {
+  background: var(--surface); border-radius: var(--radius);
+  padding: 40px 60px; text-align: center;
+  box-shadow: var(--shadow-lg); border: 1px solid var(--border);
+}
+.spinner {
+  width: 44px; height: 44px; border: 3px solid var(--border);
+  border-top-color: var(--sage); border-radius: 50%;
+  animation: spin 0.8s linear infinite; margin: 0 auto 16px;
+}
+.spinner-box p { font-size: 15px; color: var(--sage-dk); font-weight: 600; }
+.spinner-box small { color: var(--text-lt); font-size: 12px; }
+
+/* ── 預覽 ── */
+.preview-toc { font-size: 13px; line-height: 2; color: var(--text-md); }
+.preview-toc .toc-ch { font-weight: 600; color: var(--sage-dk); margin-top: 6px; }
+.preview-toc .toc-sec { padding-left: 20px; color: var(--text-md); }
+.preview-toc .toc-front { color: var(--text-lt); }
+.preview-meta {
+  background: linear-gradient(135deg, var(--sage-lt) 0%, var(--dusty-lt) 100%);
+  border-radius: var(--radius-sm); padding: 16px 20px; margin-bottom: 16px;
+}
+.preview-meta h3 { font-size: 15px; color: var(--sage-dk); margin-bottom: 6px; }
+.preview-meta p { font-size: 12px; color: var(--text-md); line-height: 1.8; }
+
+/* ── Toast ── */
+#toast {
+  position: fixed; bottom: 80px; right: 24px; z-index: 9999;
+  padding: 10px 20px; border-radius: var(--radius-sm); font-size: 13px;
+  box-shadow: var(--shadow-lg); transition: opacity 0.3s; font-family: inherit;
+  border: 1px solid transparent;
+}
+
+/* ── 小工具 ── */
+.row { display: flex; align-items: center; gap: 8px; }
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+.mt-4 { margin-top: 4px; } .mt-8 { margin-top: 8px; } .mt-16 { margin-top: 16px; }
+.gap-8 { gap: 8px; } .gap-12 { gap: 12px; }
+</style>
+<!-- SVG 圖示符號庫（隱藏，供全頁 <use> 引用） -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="i-doc" viewBox="0 0 24 24">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+    <polyline points="14 2 14 8 20 8"/>
+    <line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/>
+    <line x1="8" y1="9" x2="11" y2="9"/>
+  </symbol>
+  <symbol id="i-school" viewBox="0 0 24 24">
+    <path d="M3 21V9l9-6 9 6v12H3z"/><path d="M9 21v-6h6v6"/>
+    <line x1="12" y1="3" x2="12" y2="9"/>
+  </symbol>
+  <symbol id="i-thesis" viewBox="0 0 24 24">
+    <rect x="3" y="3" width="18" height="18" rx="2"/>
+    <line x1="7" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="17" y2="12"/>
+    <line x1="7" y1="16" x2="13" y2="16"/>
+  </symbol>
+  <symbol id="i-person" viewBox="0 0 24 24">
+    <circle cx="12" cy="8" r="4"/>
+    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+  </symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24">
+    <path d="M12 21C12 21 4 13.5 4 8.5a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 8.5C20 13.5 12 21 12 21z"/>
+  </symbol>
+  <symbol id="i-text" viewBox="0 0 24 24">
+    <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="10" x2="20" y2="10"/>
+    <line x1="4" y1="14" x2="20" y2="14"/><line x1="4" y1="18" x2="14" y2="18"/>
+  </symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24">
+    <polygon points="12 2 22 8.5 12 15 2 8.5 12 2"/>
+    <polyline points="2 14.5 12 21 22 14.5"/>
+    <polyline points="2 11.5 12 18 22 11.5"/>
+  </symbol>
+  <symbol id="i-book" viewBox="0 0 24 24">
+    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+  </symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+    <circle cx="12" cy="12" r="3"/>
+  </symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="10"/>
+    <line x1="2" y1="12" x2="22" y2="12"/>
+    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+  </symbol>
+  <symbol id="i-download" viewBox="0 0 24 24">
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+    <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+  </symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24">
+    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+  </symbol>
+  <symbol id="i-x" viewBox="0 0 24 24">
+    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+  </symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24">
+    <polyline points="23 4 23 10 17 10"/>
+    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+  </symbol>
+</svg>
+</head>
+<body>
+
+<!-- ── 頂部標題 ── -->
+<header>
+  <div class="header-left">
+    <div class="header-logo">
+      <svg class="ico" width="20" height="20"><use href="#i-doc"/></svg>
+    </div>
+    <div>
+      <h1>台灣大學碩博士論文框架系統</h1>
+      <div class="sub">Taiwan University Master & Doctoral Thesis Generator</div>
+    </div>
+  </div>
+  <div class="header-badge">EiMBA Format</div>
+</header>
+
+<div class="layout">
+
+  <!-- ── 側欄 ── -->
+  <nav class="sidebar">
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">基本資料</div>
+      <button class="nav-btn active" onclick="showSection('school',this)">
+        <span class="icon"><svg class="ico" width="16" height="16"><use href="#i-school"/></svg></span>學校資訊
+      </button>
+      <button class="nav-btn" onclick="showSection('thesis',this)">
+        <span class="icon"><svg class="ico" width="16" height="16"><use href="#i-thesis"/></svg></span>論文資訊
+      </button>
+      <button class="nav-btn" onclick="showSection('author',this)">
+        <span class="icon"><svg class="ico" width="16" height="16"><use href="#i-person"/></svg></span>作者與教授
+      </button>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">論文內容</div>
+      <button class="nav-btn" onclick="showSection('ack',this)">
+        <span class="icon"><svg class="ico" width="16" height="16"><use href="#i-heart"/></svg></span>誌謝
+      </button>
+      <button class="nav-btn" onclick="showSection('abstract',this)">
+        <span class="icon"><svg class="ico" width="16" height="16"><use href="#i-text"/></svg></span>摘要與關鍵詞
+      </button>
+      <button class="nav-btn" onclick="showSection('chapters',this)">
+        <span class="icon"><svg class="ico" width="16" height="16"><use href="#i-layers"/></svg></span>章節內容
+      </button>
+      <button class="nav-btn" onclick="showSection('refs',this)">
+        <span class="icon"><svg class="ico" width="16" height="16"><use href="#i-book"/></svg></span>參考文獻
+      </button>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">工具</div>
+      <button class="nav-btn" onclick="showSection('preview',this)">
+        <span class="icon"><svg class="ico" width="16" height="16"><use href="#i-eye"/></svg></span>結構預覽
+      </button>
+    </div>
+  </nav>
+
+  <!-- ── 主內容 ── -->
+  <main class="main">
+
+    <!-- 學校資訊 -->
+    <div class="card active" id="card-school">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ico" width="20" height="20"><use href="#i-school"/></svg></div>
+        <div><h2>學校資訊</h2><p>填寫學校、學院與所系名稱（中英文）</p></div>
+      </div>
+      <div class="form-grid">
+        <div class="field"><label>大學名稱（中）</label><input id="university" type="text" placeholder="國立臺灣大學"></div>
+        <div class="field"><label>學院名稱（中）</label><input id="college" type="text" placeholder="管理學院"></div>
+        <div class="field full">
+          <label>所系名稱（中）</label>
+          <input id="program" type="text" placeholder="創業創新管理碩士在職專班">
+        </div>
+        <div class="field"><label>University（英）</label><input id="university_en" type="text" placeholder="National Taiwan University"></div>
+        <div class="field"><label>College（英）</label><input id="college_en" type="text" placeholder="College of Management"></div>
+        <div class="field full"><label>Program（英）</label><input id="program_en" type="text" placeholder="Entrepreneurship and Innovation MBA Program"></div>
+      </div>
+    </div>
+
+    <!-- 論文資訊 -->
+    <div class="card" id="card-thesis">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ico" width="20" height="20"><use href="#i-thesis"/></svg></div>
+        <div><h2>論文資訊</h2><p>論文題目、類型與時間</p></div>
+      </div>
+      <div class="form-grid">
+        <div class="field full">
+          <label>論文題目（中文）</label>
+          <input id="title_zh" type="text" placeholder="請輸入論文題目">
+        </div>
+        <div class="field full"><label>論文題目（英文）</label><input id="title_en" type="text" placeholder="Please Enter Thesis Title"></div>
+        <div class="field">
+          <label>論文類型（中）</label>
+          <select id="thesis_type"><option value="碩士論文">碩士論文</option><option value="博士論文">博士論文</option></select>
+        </div>
+        <div class="field">
+          <label>Thesis Type（英）</label>
+          <select id="thesis_type_en"><option value="Master Thesis">Master Thesis</option><option value="Doctoral Dissertation">Doctoral Dissertation</option></select>
+        </div>
+        <div class="field"><label>年份（民國）</label><input id="year_zh" type="number" placeholder="114"></div>
+        <div class="field"><label>月份</label><input id="month_zh" type="number" placeholder="5" min="1" max="12"></div>
+        <div class="field"><label>Year（西元）</label><input id="year_en" type="number" placeholder="2025"></div>
+        <div class="field">
+          <label>Month（英）</label>
+          <select id="month_en">
+            <option>January</option><option>February</option><option>March</option><option>April</option>
+            <option selected>May</option><option>June</option><option>July</option><option>August</option>
+            <option>September</option><option>October</option><option>November</option><option>December</option>
+          </select>
+        </div>
+        <div class="field"><label>輸出檔名</label><input id="output_filename" type="text" placeholder="碩士論文.docx"></div>
+      </div>
+    </div>
+
+    <!-- 作者與指導教授 -->
+    <div class="card" id="card-author">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ico" width="20" height="20"><use href="#i-person"/></svg></div>
+        <div><h2>作者與指導教授</h2><p>填寫作者資訊及指導教授</p></div>
+      </div>
+      <div class="form-grid" style="margin-bottom:20px">
+        <div class="field"><label>姓名（中文）</label><input id="author_zh" type="text" placeholder="姓名"></div>
+        <div class="field"><label>Name（英文）</label><input id="author_en" type="text" placeholder="Full Name"></div>
+        <div class="field"><label>學號</label><input id="student_id" type="text" placeholder="P00000000"></div>
+      </div>
+      <hr class="divider">
+      <div class="flex-between" style="margin-bottom:12px">
+        <span style="font-size:13px;font-weight:600;color:var(--sage-dk)">指導教授</span>
+      </div>
+      <div id="advisors-list" style="display:flex;flex-direction:column;gap:10px"></div>
+      <button class="btn-add" onclick="addAdvisor()"><svg class="ico" width="13" height="13"><use href="#i-plus"/></svg> 新增指導教授</button>
+    </div>
+
+    <!-- 誌謝 -->
+    <div class="card" id="card-ack">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ico" width="20" height="20"><use href="#i-heart"/></svg></div>
+        <div><h2>感言與誌謝</h2><p>感謝指導教授、家人與朋友的支持</p></div>
+      </div>
+      <div class="field">
+        <label>誌謝內容（中文）</label>
+        <textarea id="acknowledgements" rows="8" placeholder="請填寫您的感謝詞..."></textarea>
+      </div>
+      <div class="field mt-16">
+        <label style="color:var(--green-soft)">英文版本（自動翻譯）</label>
+        <textarea id="ack_en" rows="5" style="background:#f5faf6" placeholder="輸入中文後自動翻譯..."></textarea>
+      </div>
+    </div>
+
+    <!-- 摘要 -->
+    <div class="card" id="card-abstract">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ico" width="20" height="20"><use href="#i-text"/></svg></div>
+        <div><h2>摘要與關鍵詞</h2><p>中英文摘要及關鍵詞</p></div>
+      </div>
+
+      <div class="translate-pair">
+        <div class="pane">
+          <div class="pane-label zh">中文摘要</div>
+          <textarea id="abstract_zh" rows="11" placeholder="請填寫中文摘要..."></textarea>
+        </div>
+        <div class="translate-arrow">→</div>
+        <div class="pane">
+          <div class="pane-label en">English Abstract</div>
+          <textarea id="abstract_en" rows="11" placeholder="輸入中文摘要後自動翻譯..."></textarea>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="form-grid">
+        <div class="field">
+          <label>中文關鍵詞</label>
+          <div class="tags-wrap" id="tags-zh">
+            <input class="tag-input" id="kw-zh-input" placeholder="輸入後按 Enter" onkeydown="addTag('zh',event)">
+          </div>
+        </div>
+        <div class="field">
+          <label>Keywords</label>
+          <div class="tags-wrap" id="tags-en">
+            <input class="tag-input" id="kw-en-input" placeholder="Press Enter to add" onkeydown="addTag('en',event)">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 章節 -->
+    <div class="card" id="card-chapters">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ico" width="20" height="20"><use href="#i-layers"/></svg></div>
+        <div><h2>章節內容</h2><p>輸入中文內容後自動翻譯為英文</p></div>
+      </div>
+      <div id="chapters-list"></div>
+      <button class="btn-add" onclick="addChapter()"><svg class="ico" width="13" height="13"><use href="#i-plus"/></svg> 新增章節</button>
+    </div>
+
+    <!-- 參考文獻 -->
+    <div class="card" id="card-refs">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ico" width="20" height="20"><use href="#i-book"/></svg></div>
+        <div><h2>參考文獻</h2><p>每行一筆，請依 APA 第七版格式填寫</p></div>
+      </div>
+      <div id="refs-list" style="display:flex;flex-direction:column;gap:8px"></div>
+      <button class="btn-add" onclick="addRef()"><svg class="ico" width="13" height="13"><use href="#i-plus"/></svg> 新增參考文獻</button>
+    </div>
+
+    <!-- 預覽 -->
+    <div class="card" id="card-preview">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ico" width="20" height="20"><use href="#i-eye"/></svg></div>
+        <div><h2>結構預覽</h2><p>確認論文大綱後再產生文件</p></div>
+      </div>
+      <div id="preview-content">
+        <p style="color:var(--text-lt);text-align:center;padding:40px">點擊「更新預覽」查看論文架構</p>
+      </div>
+      <button class="btn-add" style="margin-top:12px" onclick="updatePreview()"><svg class="ico" width="13" height="13"><use href="#i-refresh"/></svg> 更新預覽</button>
+    </div>
+
+  </main>
+</div>
+
+<!-- ── 底部列 ── -->
+<div class="bottombar">
+  <span class="status-dot" id="status-msg">就緒 — 填寫資料後點擊產生</span>
+  <button class="btn-generate" onclick="generate()">
+    <svg class="ico" width="15" height="15" style="stroke:white"><use href="#i-download"/></svg> 產生論文 .docx
+  </button>
+</div>
+
+<!-- Loading -->
+<div class="overlay" id="overlay">
+  <div class="spinner-box">
+    <div class="spinner"></div>
+    <p>正在產生論文文件...</p>
+    <small>請稍候</small>
+  </div>
+</div>
+
+<script>
+let kwZh = [], kwEn = [], advisors = [], chapters = [], refs = [];
+
+// ── 初始化 ──
+fetch('/api/config').then(r=>r.json()).then(d=>{
+  if (!d.ok) return;
+  const c = d.config;
+  ['university','college','program','university_en','college_en','program_en',
+   'title_zh','title_en','thesis_type','thesis_type_en','year_zh','month_zh',
+   'year_en','month_en','output_filename','author_zh','author_en','student_id',
+   'acknowledgements','abstract_zh','abstract_en'].forEach(k => setVal(k, c[k]));
+  kwZh = c.keywords_zh || []; kwEn = c.keywords_en || [];
+  renderTags();
+  advisors = c.advisors || []; renderAdvisors();
+  chapters = c.chapters || []; renderChapters();
+  refs = c.references || []; renderRefs();
+  bindStaticAutoTranslate();
+  bindChapterAutoTranslate();
+  bindAdvisorAutoTranslate();
+});
+
+function setVal(id, v) {
+  const el = document.getElementById(id);
+  if (el && v != null) el.value = v;
+}
+
+// ── 導覽 ──
+function showSection(name, btn) {
+  document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('card-'+name).classList.add('active');
+  btn.classList.add('active');
+  if (name==='preview') updatePreview();
+}
+
+// ── 關鍵詞 ──
+function addTag(lang, e) {
+  if (e.key!=='Enter') return; e.preventDefault();
+  const input = document.getElementById(`kw-${lang}-input`);
+  const val = input.value.trim(); if (!val) return;
+  if (lang==='zh') {
+    kwZh.push(val);
+    // 自動翻譯新增的中文關鍵詞並加入英文清單
+    callTranslate(val).then(en => {
+      if (en) { kwEn.push(en); renderTags(); }
+    }).catch(()=>{});
+  } else {
+    kwEn.push(val);
+  }
+  input.value=''; renderTags();
+}
+function renderTags() { renderTagList('zh',kwZh); renderTagList('en',kwEn); }
+function renderTagList(lang, arr) {
+  const wrap = document.getElementById(`tags-${lang}`);
+  const input = document.getElementById(`kw-${lang}-input`);
+  wrap.innerHTML='';
+  arr.forEach((kw,i)=>{
+    const tag = document.createElement('span'); tag.className='tag';
+    tag.innerHTML=`${esc(kw)}<button onclick="removeTag('${lang}',${i})">×</button>`;
+    wrap.appendChild(tag);
+  });
+  wrap.appendChild(input);
+}
+function removeTag(lang,i){ if(lang==='zh') kwZh.splice(i,1); else kwEn.splice(i,1); renderTags(); }
+
+// ── 指導教授 ──
+function addAdvisor() { advisors.push({name_zh:'',name_en:'',title_en:'Ph.D.'}); renderAdvisors(); }
+function removeAdvisor(i){ advisors.splice(i,1); renderAdvisors(); }
+function renderAdvisors() {
+  document.getElementById('advisors-list').innerHTML = advisors.map((a,i)=>`
+    <div class="dynamic-item">
+      <div class="item-header">
+        <span class="item-title">指導教授 ${i+1}</span>
+        <button class="btn-remove" onclick="removeAdvisor(${i})">移除</button>
+      </div>
+      <div class="form-grid">
+        <div class="field"><label>姓名（中）</label>
+          <input id="adv-zh-${i}" type="text" value="${esc(a.name_zh)}" oninput="advisors[${i}].name_zh=this.value" placeholder="教授姓名"></div>
+        <div class="field"><label>Name（英）</label>
+          <input id="adv-en-${i}" type="text" value="${esc(a.name_en)}" oninput="advisors[${i}].name_en=this.value" placeholder="Professor Name"></div>
+        <div class="field"><label>學位</label>
+          <input type="text" value="${esc(a.title_en||'Ph.D.')}" oninput="advisors[${i}].title_en=this.value"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── 章節 ──
+function addChapter() { chapters.push({number:chapters.length+1,title_zh:'新章節',sections:[]}); renderChapters(); }
+function addSection(ci) {
+  const n=chapters[ci].sections.length+1;
+  chapters[ci].sections.push({number:`${chapters[ci].number}.${n}`,title:'新小節',content:'',content_en:''});
+  renderChapters();
+}
+function removeChapter(ci){ chapters.splice(ci,1); renderChapters(); }
+function removeSection(ci,si){ chapters[ci].sections.splice(si,1); renderChapters(); }
+
+function renderChapters() {
+  document.getElementById('chapters-list').innerHTML = chapters.map((ch,ci)=>`
+    <div class="chapter-block">
+      <div class="chapter-header">
+        <h3>第 ${ch.number} 章 &nbsp;${esc(ch.title_zh)}</h3>
+        <button class="btn-remove" onclick="removeChapter(${ci})">移除章節</button>
+      </div>
+      <div class="chapter-body">
+        <div class="form-grid" style="margin-bottom:14px">
+          <div class="field"><label>章次</label>
+            <input type="number" value="${ch.number}" oninput="chapters[${ci}].number=+this.value;renderChapters()"></div>
+          <div class="field"><label>章節標題</label>
+            <input type="text" value="${esc(ch.title_zh)}" oninput="chapters[${ci}].title_zh=this.value"></div>
+        </div>
+        ${(ch.sections||[]).map((sec,si)=>`
+          <div class="section-block">
+            <div class="form-grid">
+              <div class="field"><label>節次</label>
+                <input type="text" value="${esc(sec.number)}" oninput="chapters[${ci}].sections[${si}].number=this.value"></div>
+              <div class="field"><label>小節標題</label>
+                <input type="text" value="${esc(sec.title)}" oninput="chapters[${ci}].sections[${si}].title=this.value"></div>
+              <div class="field full">
+                <div class="flex-between" style="margin-bottom:5px">
+                  <label>內容（中文）</label>
+                  <button class="btn-remove" onclick="removeSection(${ci},${si})">移除</button>
+                </div>
+                <textarea id="sec-zh-${ci}-${si}" rows="4"
+                  oninput="chapters[${ci}].sections[${si}].content=this.value">${esc(sec.content||'')}</textarea>
+                <div class="section-en-area">
+                  <label>英文內容（自動翻譯）</label>
+                  <textarea id="sec-en-${ci}-${si}" rows="3" style="margin-top:5px;background:transparent;border:none;padding:0;resize:vertical;width:100%"
+                    placeholder="點擊翻譯後自動填入..."
+                    oninput="chapters[${ci}].sections[${si}].content_en=this.value">${esc(sec.content_en||'')}</textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        `).join('')}
+        <button class="btn-add" style="margin-top:4px" onclick="addSection(${ci})"><svg class="ico" width="13" height="13"><use href="#i-plus"/></svg> 新增小節</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── 參考文獻 ──
+function addRef(){ refs.push(''); renderRefs(); }
+function removeRef(i){ refs.splice(i,1); renderRefs(); }
+function renderRefs() {
+  document.getElementById('refs-list').innerHTML = refs.map((r,i)=>`
+    <div class="ref-item">
+      <input type="text" value="${esc(r)}" oninput="refs[${i}]=this.value" placeholder="APA 格式參考文獻...">
+      <button class="btn-remove" onclick="removeRef(${i})">移除</button>
+    </div>
+  `).join('');
+}
+
+// ── 預覽 ──
+function updatePreview() {
+  const cfg = collectConfig();
+  document.getElementById('preview-content').innerHTML = `
+    <div class="preview-meta">
+      <h3>${esc(cfg.title_zh)}</h3>
+      <p>
+        ${esc(cfg.university)}${esc(cfg.college)} &nbsp;·&nbsp; ${esc(cfg.program)}<br>
+        作者：${esc(cfg.author_zh)}（${esc(cfg.author_en)}）&nbsp;·&nbsp; 學號：${esc(cfg.student_id)}<br>
+        指導教授：${(cfg.advisors||[]).map(a=>a.name_zh).filter(Boolean).join('、')}<br>
+        中華民國 ${cfg.year_zh} 年 ${cfg.month_zh} 月
+      </p>
+    </div>
+    <div class="preview-toc">
+      <div class="toc-front">論文審定書</div>
+      <div class="toc-front">感言與誌謝</div>
+      <div class="toc-front">中文摘要</div>
+      <div class="toc-front">ABSTRACT</div>
+      <div class="toc-front">目錄 / 表目錄 / 圖目錄</div>
+      ${(cfg.chapters||[]).map(ch=>`
+        <div class="toc-ch">第${ch.number}章　${esc(ch.title_zh)}</div>
+        ${(ch.sections||[]).map(s=>`<div class="toc-sec">${esc(s.number)}　${esc(s.title)}</div>`).join('')}
+      `).join('')}
+      <div class="toc-front" style="margin-top:6px">參考文獻（${(cfg.references||[]).length} 筆）</div>
+    </div>
+  `;
+}
+
+// ── 翻譯核心 ──
+async function callTranslate(text) {
+  if (!text||!text.trim()) return '';
+  const res = await fetch('/api/translate',{
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({text}),
+  });
+  const d = await res.json();
+  if (!d.ok) throw new Error(d.error);
+  return d.result;
+}
+
+// ── 防抖自動翻譯 ──
+const _debounceMap = {};
+function autoTranslate(srcId, dstId, delay=1500) {
+  const src = document.getElementById(srcId);
+  const dst = document.getElementById(dstId);
+  if (!src || !dst) return;
+  clearTimeout(_debounceMap[srcId]);
+  const text = src.value.trim();
+  if (!text) { dst.value=''; return; }
+  // 顯示翻譯中提示
+  dst.placeholder = '翻譯中...';
+  _debounceMap[srcId] = setTimeout(async () => {
+    try {
+      const result = await callTranslate(text);
+      if (document.getElementById(srcId)?.value.trim() === text) {
+        dst.value = result;
+        dst.dispatchEvent(new Event('input'));
+      }
+    } catch(e) { showToast('自動翻譯失敗：'+e.message,'err'); }
+    finally { dst.placeholder = ''; }
+  }, delay);
+}
+
+// ── 綁定靜態欄位的自動翻譯 ──
+function bindStaticAutoTranslate() {
+  const pairs = [
+    ['title_zh',         'title_en'],
+    ['abstract_zh',      'abstract_en'],
+    ['acknowledgements', 'ack_en'],
+    ['program',          'program_en'],
+    ['author_zh',        'author_en'],
+  ];
+  pairs.forEach(([src, dst]) => {
+    const el = document.getElementById(src);
+    if (el) el.addEventListener('input', () => autoTranslate(src, dst));
+  });
+}
+
+// ── 指導教授姓名自動翻譯（事件委派）──
+function bindAdvisorAutoTranslate() {
+  document.getElementById('advisors-list').addEventListener('input', (e) => {
+    const el = e.target;
+    if (!el.id || !el.id.startsWith('adv-zh-')) return;
+    const enId = el.id.replace('adv-zh-', 'adv-en-');
+    const enEl = document.getElementById(enId);
+    if (!enEl) return;
+    const key = el.id;
+    clearTimeout(_debounceMap[key]);
+    const text = el.value.trim();
+    if (!text) { enEl.value = ''; return; }
+    enEl.placeholder = '翻譯中...';
+    _debounceMap[key] = setTimeout(async () => {
+      try {
+        const result = await callTranslate(text);
+        if (document.getElementById(el.id)?.value.trim() === text) {
+          enEl.value = result;
+          const i = +el.id.split('-')[2];
+          if (advisors[i]) advisors[i].name_en = result;
+        }
+      } catch(e) { showToast('翻譯失敗：'+e.message, 'err'); }
+      finally { enEl.placeholder = 'Professor Name'; }
+    }, 1000);
+  });
+}
+
+// ── 章節自動翻譯（動態元素，事件委派）──
+function bindChapterAutoTranslate() {
+  document.getElementById('chapters-list').addEventListener('input', (e) => {
+    const ta = e.target;
+    if (!ta.id || !ta.id.startsWith('sec-zh-')) return;
+    // sec-zh-{ci}-{si} → sec-en-{ci}-{si}
+    const enId = ta.id.replace('sec-zh-', 'sec-en-');
+    const enEl = document.getElementById(enId);
+    if (!enEl) return;
+    const key = ta.id;
+    clearTimeout(_debounceMap[key]);
+    const text = ta.value.trim();
+    if (!text) { enEl.value=''; return; }
+    enEl.placeholder='翻譯中...';
+    _debounceMap[key] = setTimeout(async () => {
+      try {
+        const result = await callTranslate(text);
+        if (document.getElementById(ta.id)?.value.trim() === text) {
+          enEl.value = result;
+          // 同步回 chapters 陣列
+          const parts = ta.id.split('-'); // ['sec','zh',ci,si]
+          const ci=+parts[2], si=+parts[3];
+          if (chapters[ci]?.sections[si]) chapters[ci].sections[si].content_en = result;
+        }
+      } catch(e) { showToast('自動翻譯失敗：'+e.message,'err'); }
+      finally { enEl.placeholder=''; }
+    }, 1500);
+  });
+}
+
+async function translateField(srcId, dstId, btn) {
+  const src=document.getElementById(srcId), dst=document.getElementById(dstId);
+  const text=(src?src.value:'').trim(); if (!text){showToast('請先填寫中文內容');return;}
+  const orig=btn.innerHTML; btn.disabled=true; btn.innerHTML='<span class="spin">⏳</span>';
+  try {
+    dst.value = await callTranslate(text);
+    dst.dispatchEvent(new Event('input'));
+    showToast('翻譯完成 ✓','ok');
+  } catch(e){ showToast('翻譯失敗：'+e.message,'err'); }
+  finally { btn.disabled=false; btn.innerHTML=orig; }
+}
+
+async function translateSection(ci,si,btn) {
+  const zhEl=document.getElementById(`sec-zh-${ci}-${si}`);
+  const enEl=document.getElementById(`sec-en-${ci}-${si}`);
+  const text=(zhEl?zhEl.value:chapters[ci].sections[si].content||'').trim();
+  if (!text){showToast('請先填寫中文內容');return;}
+  const orig=btn.innerHTML; btn.disabled=true; btn.innerHTML='<span class="spin">⏳</span>';
+  try {
+    const result=await callTranslate(text);
+    if(enEl)enEl.value=result;
+    chapters[ci].sections[si].content_en=result;
+    showToast('翻譯完成 ✓','ok');
+  } catch(e){ showToast('翻譯失敗：'+e.message,'err'); }
+  finally { btn.disabled=false; btn.innerHTML=orig; }
+}
+
+async function translateKeywords(btn) {
+  if(kwZh.length===0){showToast('請先新增中文關鍵詞');return;}
+  const orig=btn.innerHTML; btn.disabled=true; btn.innerHTML='<span class="spin">⏳</span> 翻譯中...';
+  try {
+    const result=await callTranslate(kwZh.join('\n'));
+    kwEn=result.split('\n').map(s=>s.trim()).filter(Boolean);
+    renderTags(); showToast(`已翻譯 ${kwEn.length} 個關鍵詞 ✓`,'ok');
+  } catch(e){ showToast('翻譯失敗：'+e.message,'err'); }
+  finally { btn.disabled=false; btn.innerHTML=orig; }
+}
+
+// ── 蒐集表單 ──
+function collectConfig() {
+  return {
+    university:    v('university'), college:       v('college'),
+    program:       v('program'),    university_en: v('university_en'),
+    college_en:    v('college_en'), program_en:    v('program_en'),
+    title_zh:      v('title_zh'),   title_en:      v('title_en'),
+    thesis_type:   v('thesis_type'),thesis_type_en:v('thesis_type_en'),
+    year_zh:       +v('year_zh'),   month_zh:      +v('month_zh'),
+    year_en:       +v('year_en'),   month_en:      v('month_en'),
+    output_filename: v('output_filename')||'碩士論文.docx',
+    author_zh:     v('author_zh'),  author_en:     v('author_en'),
+    student_id:    v('student_id'),
+    advisors, acknowledgements: v('acknowledgements'),
+    abstract_zh:   v('abstract_zh'), abstract_en:  v('abstract_en'),
+    keywords_zh: kwZh, keywords_en: kwEn,
+    chapters, references: refs,
+  };
+}
+function v(id){ const el=document.getElementById(id); return el?el.value:''; }
+
+// ── 產生文件 ──
+async function generate() {
+  const cfg=collectConfig();
+  const btn=document.querySelector('.btn-generate');
+  const status=document.getElementById('status-msg');
+  const overlay=document.getElementById('overlay');
+  btn.disabled=true; overlay.classList.add('show');
+  status.className='status-dot'; status.textContent='產生中...';
+  try {
+    const res=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(cfg)});
+    if(!res.ok){const e=await res.json();throw new Error(e.error||'伺服器錯誤');}
+    const blob=await res.blob();
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url;
+    a.download=cfg.output_filename||'碩士論文.docx';
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a); URL.revokeObjectURL(url);
+    status.className='status-dot ok'; status.textContent=`已成功產生：${cfg.output_filename}`;
+  } catch(e){
+    status.className='status-dot err'; status.textContent=`錯誤：${e.message}`;
+  } finally { btn.disabled=false; overlay.classList.remove('show'); }
+}
+
+// ── Toast ──
+function showToast(msg,type='') {
+  let t=document.getElementById('toast');
+  if(!t){t=document.createElement('div');t.id='toast';document.body.appendChild(t);}
+  t.textContent=msg;
+  if(type==='ok'){t.style.background='#f0fdf4';t.style.color='#166534';t.style.borderColor='#86efac';}
+  else if(type==='err'){t.style.background='#fff1f0';t.style.color='#a0534a';t.style.borderColor='#f9c0bb';}
+  else{t.style.background='var(--sage-dk)';t.style.color='white';t.style.borderColor='transparent';}
+  t.style.opacity='1'; t.style.padding='10px 20px'; t.style.borderRadius='var(--radius-sm)';
+  t.style.fontFamily='inherit'; t.style.fontSize='13px';
+  t.style.boxShadow='var(--shadow-lg)'; t.style.border='1px solid';
+  t.style.position='fixed'; t.style.bottom='80px'; t.style.right='24px'; t.style.zIndex='9999';
+  t.style.transition='opacity 0.3s';
+  clearTimeout(t._t); t._t=setTimeout(()=>t.style.opacity='0',3000);
+}
+
+// ── 工具 ──
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+</script>
+</body>
+</html>
